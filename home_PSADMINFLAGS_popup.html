@@ -1,0 +1,71 @@
+<!--home_PSADMINFLAGS_popup.html - Produces Dialog to diplay data issues-->
+<h2>Admin Email/LDAP out of sync </h2>
+  <table class="grid">
+	        <tr>
+	        	<th>LDAP ADMIN Staff</th>
+            		<th>Email</th>
+            		<th>Username</th>
+            		<th>Sch</th>
+~[tlist_sql;
+SELECT users.lastfirst,users.email_addr,users.loginid, users.homeschoolid
+from users
+join schoolstaff ss on ss.users_dcid = users.dcid
+where
+users.adminldapenabled=1
+and LOWER(NVL(SUBSTR(users.email_addr, 0, INSTR(users.email_addr, '@')-1), users.email_addr)) != lower(users.loginid)
+and ss.status=1
+order by users.lastfirst]
+      	<tr>
+            		<td>~(1)</td>
+            	<td>~(2)</td>
+            		<td>~(3)</td>
+            		<td>~(4)</td>
+            	</tr>
+              	[/tlist_sql]
+  </table>
+            
+               <h2>Teacher Email/LDAP out of sync </h2>
+ <table class="grid">
+ <tr>
+	        	<th>Teacher </th>
+            		<th>Email</th>
+            		<th>Username</th>
+           		 <th>Sch</th>
+~[tlist_sql;
+SELECT users.lastfirst,users.email_addr,users.loginid, users.homeschoolid
+from users
+join schoolstaff ss on ss.users_dcid = users.dcid
+where
+users.teacherldapenabled=1
+and LOWER(NVL(SUBSTR(users.email_addr, 0, INSTR(users.email_addr, '@')-1), users.email_addr)) != lower(users.teacherloginid)
+and ss.status=1
+order by users.lastfirst]
+      	<tr>
+            		<td>~(1)</td>
+            		<td>~(2)</td>
+           		<td>~(3)</td>
+            		<td>~(4)</td>
+             	 </tr>
+             	 [/tlist_sql]
+    </table>
+            
+            
+            
+            <h2>Duplicate Staff</h2>
+<table class="grid">
+	        <tr>
+	        	<th>Staff </th>
+           		<th>Sch</th>
+            		<th>TchNum</th>            
+~[tlist_sql;
+select users.lastfirst, users.homeschoolid, users.teachernumber from users
+INNER JOIN users users2 on users.dcid != users2.dcid AND users.teachernumber = users2.teachernumber
+ORDER BY teachernumber, lastfirst, homeschoolid
+]
+      	<tr>
+            		<td>~(1)</td>
+           		<td>~(2)</td>
+           		<td>~(3)</td>
+       	</tr>
+       	[/tlist_sql]
+ </table>
