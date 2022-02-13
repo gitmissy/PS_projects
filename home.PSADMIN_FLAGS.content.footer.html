@@ -1,0 +1,81 @@
+<!-- home.PSADMIN_FLAGS.content.footer.html - produces link on Start SCreen wShort description of issue-->
+~[if#missy.~[x:userid]=5154]
+<!-- Add Notification Flags for primary admin about Staff account Criteria -->
+
+       <script type="text/javascript">
+            $j(function() {
+                     $j('.scope').before( $j('#PSADMIN').detach() ); 
+                   
+            });
+        </script>         
+
+<!-- Admin Username does not match email prefix  -->
+~[tlist_sql;
+with thecount as (
+SELECT count(users.dcid) as adminUN_wrong
+from users
+join schoolstaff ss on ss.users_dcid = users.dcid
+where
+users.adminldapenabled=1
+and LOWER(NVL(SUBSTR(users.email_addr, 0, INSTR(users.email_addr, '@')-1), users.email_addr)) != lower(users.loginid)
+and ss.status=1) 
+select case when thecount.adminUN_wrong > 0 then 'show' else 'hide' end
+from thecount
+]
+<div class="~(show)" id="PSADMIN">[/tlist_sql]
+<span style="color: #800000;font-size:small"> &nbsp;
+     <b>  <a title="Notifier Data" class="dialogC" id="PSADMINPOP" href="home_PSADMINFLAGS_popup.html">Admin UN Issue</a> </b> </span>
+</div>
+
+
+       <script type="text/javascript">
+            $j(function() {
+                     $j('.scope').before( $j('#StaffDupes').detach() ); 
+                   
+            });
+        </script>     
+
+<!-- Teacher Username does not match email prefix  -->
+
+       <script type="text/javascript">
+            $j(function() {
+                         $j('.breadcrumbs').after( $j('#PSADMIN2') ); 
+            });
+        </script>
+
+~[tlist_sql;
+with thecount2 as (
+SELECT count(users.dcid) as TchrUN_wrong
+from users
+join schoolstaff ss on ss.users_dcid = users.dcid
+where
+users.teacherldapenabled=1
+and LOWER(NVL(SUBSTR(users.email_addr, 0, INSTR(users.email_addr, '@')-1), users.email_addr)) != lower(users.teacherloginid)
+and ss.status=1) 
+select case when thecount2.TchrUN_wrong > 0 then 'show' else 'hide' end
+from thecount2
+]
+<div class="~(show)" id="PSADMIN2">[/tlist_sql]
+<span style="color:#800000;font-size:small"> &nbsp;
+       <a title="Notifier Data" class="dialogC" id="PSTCHRPOP" href="home_PSADMINFLAGS_popup.html">Teacher UN Issue</a> </span>
+</div>
+
+
+
+<!-- Duplicate Staff Created by HR Feed (same TeacherNumber separate record)  -->
+~[tlist_sql;
+with thecount3 as (
+SELECT count(users.dcid) as dupe_staff
+from users
+INNER JOIN users users2 on users.dcid != users2.dcid AND users.teachernumber = users2.teachernumber
+) 
+select case when thecount3.dupe_staff > 0 then 'show' else 'hide' end
+from thecount3
+]
+<div class="~(show)" id="StaffDupes">[/tlist_sql]
+<span style="color: #800000;font-size:small"> &nbsp;
+     <b>  <a title="Notifier Data" class="dialogC" id="PSADMINPOP_dupe" href="home_PSADMINFLAGS_popup.html">Dupe Staff</a> </b> </span>
+</div>
+
+[else#missy]
+[/if#missy]
